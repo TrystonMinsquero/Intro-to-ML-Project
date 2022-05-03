@@ -1,3 +1,9 @@
 torch
 tensorflow
 streamlit
+nltk
+textblob
+sklearn
+wordcloud
+keras
+matplotlib
