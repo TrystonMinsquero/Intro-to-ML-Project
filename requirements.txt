@@ -3,10 +3,8 @@ tensorflow
 streamlit
 pandas
 nltk
-nltk.corpus
 textblob
 sklearn
 wordcloud
 keras
-matplotlib.pyplot
-re
+matplotlib
