@@ -3,7 +3,7 @@ import io
 import contextlib
 
 # source code: https://gist.github.com/schaumb/037f139035d93cff3ad9f4f7e5f739ce
-
+# was written by github user Bela Schaum: https://gist.github.com/schaumb
 # redirect std output to a streamlit widget
 
 class _Redirect:
