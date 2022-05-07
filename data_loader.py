@@ -37,6 +37,10 @@ def parse_reviews(values):
     return [parse_review(value) for value in values]
 
 # And this just tests out the code above
-f = open("amazon_alexa.tsv", "r", encoding="utf-8")
-data = parse_reviews(load_tsv(f))
-f.close()
+
+
+def get_amazon_alexa_data():
+    f = open("amazon_alexa.tsv", "r", encoding="utf-8")
+    data = parse_reviews(load_tsv(f))
+    f.close()
+    return data
