@@ -4,6 +4,7 @@ from textblob import Word
 import matplotlib.pyplot as plt
 import wordcloud
 import re
+import json
 
 # add sentiments based off the numerical rating on a dictionary
 def add_sentiments(data, cutoff=3.0):
@@ -23,7 +24,18 @@ def has_null(data_df):
 def download_nltk_requirements():
     nltk.download('stopwords')
     nltk.download('omw-1.4')
-    return stopwords.words('english')
+
+def populate_stopwords_file():
+    file = open('stopwords.json', 'w')
+    json.dump(stopwords.words('english'), file)
+    file.close()
+
+def get_stopwords_from_file():
+    file = open('stopwords.json', 'r')
+    stop_words = json.load(file)
+    file.close()
+    return stop_words
+    
 
 # will clean the 'verified_reviews' column to be ready for analysis
 def clean(data_df, stop_words):

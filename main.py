@@ -21,7 +21,8 @@ def fetch_and_clean_data():
     add_sentiments(data)
 
     # downloads nltk onto users computer (only need to run once)
-    stop_words = download_nltk_requirements()
+    download_nltk_requirements()
+    stop_words=get_stopwords_from_file()
 
     # convert data into a pandas dataframe
     data_df = pd.DataFrame(data)
