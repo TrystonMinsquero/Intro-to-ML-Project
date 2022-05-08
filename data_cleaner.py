@@ -24,6 +24,8 @@ def has_null(data_df):
 def download_nltk_requirements():
     nltk.download('stopwords')
     nltk.download('omw-1.4')
+    nltk.download('wordnet')
+
 
 def populate_stopwords_file():
     file = open('stopwords.json', 'w')
