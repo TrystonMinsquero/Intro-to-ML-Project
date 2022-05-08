@@ -23,10 +23,10 @@ def has_null(data_df):
 def download_nltk_requirements():
     nltk.download('stopwords')
     nltk.download('omw-1.4')
+    return stopwords.words('english')
 
 # will clean the 'verified_reviews' column to be ready for analysis
-def clean(data_df):
-    stop_words = stopwords.words('english')
+def clean(data_df, stop_words):
 
     # To lowercase
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join(x.lower() for x in x.split()))

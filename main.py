@@ -21,11 +21,11 @@ def fetch_and_clean_data():
     add_sentiments(data)
 
     # downloads nltk onto users computer (only need to run once)
-    download_nltk_requirements()
+    stop_words = download_nltk_requirements()
 
     # convert data into a pandas dataframe
     data_df = pd.DataFrame(data)
-    data_df = clean(data_df)
+    data_df = clean(data_df, stop_words=stop_words)
 
     # Encoded the target column
     lb=LabelEncoder()
@@ -83,6 +83,6 @@ if submit:
         st.write(f"Loss: {round(loss,4)}   and   Accuracy: {round(accuracy, 4)}")
 
 
-# st.pyplot(get_common_wordcloud(data_df))
+st.pyplot(get_common_wordcloud(data_df))
 
 # st.write(data_df)
