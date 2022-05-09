@@ -5,12 +5,18 @@ import matplotlib.pyplot as plt
 import wordcloud
 import re
 import json
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+from sklearn.preprocessing import LabelEncoder
 
 # add sentiments based off the numerical rating on a dictionary
 def add_sentiments(data, cutoff=3.0):
     for review in data:
         sent = 'Positive' if review['rating'] > cutoff else 'Negative'
         review['sentiment'] = sent
+
+def add_review_length(data_df):
+    data_df['review_len'] = data_df['verified_reviews'].astype(str).apply(len)
 
 #checks if there is any null values in the data
 def has_null(data_df):
@@ -40,7 +46,8 @@ def get_stopwords_from_file():
     
 
 # will clean the 'verified_reviews' column to be ready for analysis
-def clean(data_df, stop_words):
+def clean(data_df):
+    stop_words = get_stopwords_from_file()
 
     # To lowercase
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join(x.lower() for x in x.split()))
@@ -54,7 +61,19 @@ def clean(data_df, stop_words):
     # Lemmatization
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join([Word(x).lemmatize() for x in x.split()]))
 
+    # Encoded the target column
+    lb=LabelEncoder()
+    data_df['sentiment'] = lb.fit_transform(data_df['sentiment'])
+
     return data_df
+
+def vectorize(data_df, num_words=500):
+    # Convert reviews to numerical vectors
+    tokenizer = Tokenizer(num_words=num_words, split=' ') 
+    tokenizer.fit_on_texts(data_df['verified_reviews'].values)
+    X = tokenizer.texts_to_sequences(data_df['verified_reviews'].values)
+    X = pad_sequences(X)
+    return X
 
 # returns a plt of the wordcloud of common words
 def get_common_wordcloud(data_df):
