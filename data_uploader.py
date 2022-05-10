@@ -1,9 +1,6 @@
 import streamlit as st
-from data_loader import get_amazon_alexa_data
 from data_cleaner import *
 import pandas as pd
-import json
-import matplotlib.pyplot as plt
 from os import listdir
 from os.path import isfile, join
 

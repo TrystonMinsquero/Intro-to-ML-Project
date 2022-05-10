@@ -1,14 +1,13 @@
 import streamlit as st
 from data_cleaner import *
 import pandas as pd
-from data_manipulation import fetch_and_clean_data
-from data_uploader import get_dataset, get_dataset_names
-import redirect as rd
+from data_visualizer import fetch_and_clean_data
+from data_uploader import get_dataset_names
+from model_design import get_model, get_model_names, save_model_as
 # Importing required libraries
 from collections import Counter
 from sklearn.metrics import classification_report,confusion_matrix,accuracy_score
 from keras.models import Sequential, load_model, save_model
-from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from sklearn.model_selection import train_test_split 
 from os import listdir
 from os.path import isfile, join
@@ -33,7 +32,7 @@ def app():
     data_df = add_sentiments(data_df)
     X = vectorize_data(data_df)
 
-    model = load_model(join('models', modelname + '.keras'))
+    model = get_model(modelname)
     
     # model = create_model(X)
     # Get inputs
@@ -72,30 +71,10 @@ def app():
         # X = vectorize_text(cleaned_text)
         # st.write(f'prediction: {model(X)}')
 
-        save_model(model, join('models', modelname + '.keras'))
+        save_model_as(modelname, model)
         st.success('Model saved to ' + join('models', modelname + '.keras'))
         print('Model saved to ' + join('models', modelname + '.keras'))
 
-
-def get_model_names():
-    onlyfiles = [f for f in listdir('models') if isfile(join('models', f))]
-    model_names = []
-    for file in onlyfiles:
-        model_names.append(file.removesuffix('.keras'))
-    return model_names
-
-
-# Create LTSM Model 
-@st.cache(persist=True, allow_output_mutation=True)
-def create_model(X):
-    model = Sequential()
-    model.add(Embedding(500, 120, input_length = X.shape[1]))
-    model.add(SpatialDropout1D(0.4))
-    model.add(LSTM(176, dropout=0.2, recurrent_dropout=0.2))
-    model.add(Dense(2,activation='softmax'))
-    model.compile(loss = 'categorical_crossentropy', optimizer='adam', metrics = ['accuracy'])
-    print(model.summary())
-    return model
 
 class TrainCallback(callbacks.Callback):
     

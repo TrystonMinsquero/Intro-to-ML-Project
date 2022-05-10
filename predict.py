@@ -1,7 +1,8 @@
 import streamlit as st
 from data_cleaner import *
 import pandas as pd
-from data_manipulation import fetch_and_clean_data
+from data_visualizer import fetch_and_clean_data
+from model_design import get_model
 import redirect as rd
 # Importing required libraries
 from sklearn.metrics import classification_report,confusion_matrix,accuracy_score
@@ -30,7 +31,7 @@ def app():
 
     if submit:
 
-        model = load_model(join('models', modelname + '.keras'))
+        model = get_model(modelname)
         print(model.summary())
 
         if singlePrediction:      
@@ -38,8 +39,9 @@ def app():
             cleaned_text = clean_text(singlePrediction)
             st.text(cleaned_text)
             X = vectorize_text(cleaned_text)
-            st.write(f'input: {X}')
+            # st.write(f'input: {X}')
             st.write(f'prediction: {model(X)}')
+            
         
         
 
