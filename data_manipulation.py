@@ -46,7 +46,7 @@ def fetch_and_clean_data():
 
     # convert data into a pandas dataframe
     data_df = pd.DataFrame(data)
-    data_df = clean(data_df)
-    X = vectorize(data_df)
+    data_df = clean_data(data_df)
+    X = vectorize_data(data_df)
 
     return data_df, X

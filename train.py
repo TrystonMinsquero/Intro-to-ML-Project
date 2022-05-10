@@ -6,7 +6,7 @@ import redirect as rd
 # Importing required libraries
 from collections import Counter
 from sklearn.metrics import classification_report,confusion_matrix,accuracy_score
-from keras.models import Sequential, load_model
+from keras.models import Sequential, load_model, save_model
 from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from sklearn.model_selection import train_test_split 
 from os import listdir
@@ -54,11 +54,24 @@ def app():
         complete = st.text("Validating Model...")
         loss, accuracy = model.evaluate(X_test, y_test)
         complete.text(f"Loss: {round(loss,4)}   and   Accuracy: {round(accuracy, 4)}")
+
+        # Test to make sure the model works
+        # singlePrediction = "This a an amazing product. I love it and it's great"
+        # cleaned_text = clean_text(singlePrediction)
+        # st.text(cleaned_text)
+        # X = vectorize_text(cleaned_text)
+        # st.write(f'prediction: {model(X)}')
+
+        st.success("Saved training session to model")
+
         
-        save = st.button('Save Model')
-        if save:
-            model.save(join('models', modelname + '.keras'))
-            
+        print('saved model to ' + join('models', modelname + '.keras'))
+        save_model(model, join('models', modelname + '.keras'))
+        same_model = load_model(join('models', modelname + '.keras'))
+        print(model.summary())
+        print(same_model.summary())
+
+
 
 
 def get_model_names():
@@ -87,9 +100,9 @@ class TrainCallback(callbacks.Callback):
         super().__init__()
         self.epochNum = epochNum
         self.stepsPerEpoch = stepsPerEpoch
-        self.epochLabel = st.text("Epoch 1/" + str(epochNum))
+        self.epochLabel = st.text("Epoch 0/" + str(epochNum))
         self.epochBar = st.progress(0.0)
-        self.batchLabel = st.text("Batch 1/" + str(stepsPerEpoch))
+        self.batchLabel = st.text("Batch 0/" + str(stepsPerEpoch))
         self.batchBar = st.progress(0.0)
 
     def on_train_begin(self, logs=None):
@@ -99,14 +112,14 @@ class TrainCallback(callbacks.Callback):
         print("Stop training")
 
     def on_epoch_begin(self, epoch, logs=None):
-        self.epochLabel.text(f"Epoch {epoch + 1}/{self.epochNum}")
+        self.epochLabel.text(f"Epoch {epoch + 1}/{(self.epochNum)}")
         self.batchBar.progress(0.0)
 
     def on_batch_begin(self, batch, logs=None):
-        self.batchLabel.text(f"Batch {batch + 1}/{self.stepsPerEpoch}")
+        self.batchLabel.text(f"Batch {batch + 1}/{(self.stepsPerEpoch)}")
 
     def on_epoch_end(self, epoch, logs=None):
-        self.epochBar.progress((epoch + 1.0)/self.epochNum)
+        self.epochBar.progress((epoch + 1.0)/(self.epochNum))
 
     def on_train_batch_end(self, batch, logs=None):
-        self.batchBar.progress((batch + 1.0)/self.stepsPerEpoch)
+        self.batchBar.progress((batch + 1.0)/(self.stepsPerEpoch))
