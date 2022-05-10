@@ -3,9 +3,11 @@ import data_manipulation as app1
 import model_design as app2
 import train as app3
 import predict as app4
+import data_uploader as app5
 
 # Define pages based on apps imported.
 PAGES = {
+    "Dataset uploader": app5,
     "Data Manipulation": app1,
     "Model Design": app2,
     "Training": app3,

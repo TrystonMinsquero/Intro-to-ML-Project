@@ -1,5 +1,6 @@
 import nltk
 from nltk.corpus import stopwords
+from pandas import cut
 from textblob import Word
 import matplotlib.pyplot as plt
 import wordcloud
@@ -10,10 +11,20 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import LabelEncoder
 
 # add sentiments based off the numerical rating on a dictionary
-def add_sentiments(data, cutoff=3.0):
-    for review in data:
-        sent = 'Positive' if review['rating'] > cutoff else 'Negative'
-        review['sentiment'] = sent
+# def add_sentiments(data, cutoff=3.0):
+#     for review in data:
+#         sent = 'Positive' if review['rating'] > cutoff else 'Negative'
+#         review['sentiment'] = sent
+
+def apply_sentiments(df, cutoff):
+  if df['rating'] >= cutoff:
+    return 'Positive'
+  elif df['rating'] < cutoff:
+    return 'Negative'
+
+def add_sentiments(data_df, cutoff=3.0):
+    data_df['sentiment'] = data_df.apply(apply_sentiments, args=[cutoff], axis=1)
+    return data_df
 
 def add_review_length(data_df):
     data_df['review_len'] = data_df['verified_reviews'].astype(str).apply(len)

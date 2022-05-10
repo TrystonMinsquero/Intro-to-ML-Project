@@ -2,6 +2,7 @@ import streamlit as st
 from data_cleaner import *
 import pandas as pd
 from data_manipulation import fetch_and_clean_data
+from data_uploader import get_dataset, get_dataset_names
 import redirect as rd
 # Importing required libraries
 from collections import Counter
@@ -16,12 +17,21 @@ from keras import callbacks
 def app():
     st.title("Training")
 
-    data_df, X = fetch_and_clean_data()
     if(len(get_model_names()) <= 0):
         st.write("No models to train! Create a model in model design.")
         return
 
+    if(len(get_dataset_names()) <= 0):
+        st.write("No datasets to train on! Create a dataset in data uploader.")
+        return
+
     modelname = st.radio('Choose Model to Train', get_model_names())
+
+    dataset_name = st.radio("Select Dataset", get_dataset_names())
+
+    data_df = fetch_and_clean_data(dataset_name).copy()
+    data_df = add_sentiments(data_df)
+    X = vectorize_data(data_df)
 
     model = load_model(join('models', modelname + '.keras'))
     
@@ -65,10 +75,6 @@ def app():
         save_model(model, join('models', modelname + '.keras'))
         st.success('Model saved to ' + join('models', modelname + '.keras'))
         print('Model saved to ' + join('models', modelname + '.keras'))
-
-    
-
-
 
 
 def get_model_names():

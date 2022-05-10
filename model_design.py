@@ -15,9 +15,7 @@ from os.path import join
 
 def app():
     st.title("Model Design")
-
-    data_df, X = fetch_and_clean_data()
-    max_words = len(get_words(data_df).keys())
+    max_words = 5000
 
     with st.form("Create Model", True):
 
