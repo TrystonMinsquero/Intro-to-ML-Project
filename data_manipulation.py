@@ -9,19 +9,35 @@ import matplotlib.pyplot as plt
 def app():
     data_df, X = fetch_and_clean_data()
     
-    # add_review_length(data_df)
+    add_review_length(data_df)
+    fig, ax = plt.subplots()
     st.write(data_df)
     st.write(data_df['sentiment'].shape[0])
-    plt.hist(data_df['sentiment'], bins=20, range=(0, 2))
-    # st.pyplot(plt.show())
+    ax.hist(data_df['sentiment'], bins=20, range=(0, 2))
+    st.pyplot(fig)
     y = pd.get_dummies(data_df['sentiment'])
     
     st.pyplot(get_common_wordcloud(data_df))
-    
-    # plt.scatter(X[0], y)
-    # st.pyplot(plt.show())
+
+    word_count = get_words(data_df)
+    fig, ax = plt.subplots()
+    ax.hist(word_count.values(), bins=300, range=(0,500), density=True, log=True)
+    st.pyplot(fig)
 
     return
+
+def get_words(data_df):
+    common_words=''
+    for i in data_df.verified_reviews:
+        common_words += ' '.join(str(i).split()) + ' '
+
+    word_count = dict()
+    for word in common_words.split():
+        if word in word_count.keys():
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+    return word_count
 
 def get_dataset(name):
     file = open('./datasets/' + name, 'r')
