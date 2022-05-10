@@ -85,3 +85,16 @@ def get_common_wordcloud(data_df):
     plt.imshow(word_cloud, interpolation="bilinear")
     plt.axis("off")
     return plt
+
+def get_words(data_df):
+    common_words=''
+    for i in data_df.verified_reviews:
+        common_words += ' '.join(str(i).split()) + ' '
+
+    word_count = dict()
+    for word in common_words.split():
+        if word in word_count.keys():
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+    return word_count
