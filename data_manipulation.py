@@ -4,13 +4,17 @@ from data_cleaner import *
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
+from os import listdir
+from os.path import isfile, join
+from data_uploader import *
 
 
 def app():
-    data_df, X = fetch_and_clean_data()
-    
-    add_review_length(data_df)
-    fig, ax = plt.subplots()
+    dataset_name = st.radio("Select Dataset", get_dataset_names())
+
+    data_df = fetch_and_clean_data(dataset_name).copy()
+
+
     st.write(data_df)
     st.write(data_df['sentiment'].shape[0])
     ax.hist(data_df['sentiment'], bins=20, range=(0, 2))
@@ -25,6 +29,13 @@ def app():
     st.pyplot(fig)
 
     return
+  
+def get_dataset_names():
+    onlyfiles = [f for f in listdir('datasets') if isfile(join('datasets', f))]
+    dataset_names = []
+    for file in onlyfiles:
+        dataset_names.append(file.removesuffix('.tsv').removesuffix('.csv'))
+    return dataset_names
 
 def get_words(data_df):
     common_words=''
@@ -40,29 +51,15 @@ def get_words(data_df):
     return word_count
 
 def get_dataset(name):
-    file = open('./datasets/' + name, 'r')
-    dataset = json.load(file)
-    file.close()
-    return dataset
+    onlyfiles = [f for f in listdir('datasets') if isfile(join('datasets', f))]
+    for file in onlyfiles:
+        if file.removesuffix('.tsv') == name:
+            return pd.read_csv(join('datasets', file), sep='\t')
+        elif file.removesuffix('.csv') == name:
+            return pd.read_csv(join('datasets', file))
+    return None
 
 def save_dataset(name, dataset):
     file = open('./datasets/' + name, 'w')
     json.dump(dataset, file)
     file.close()
-
-@st.cache(persist=True)
-def fetch_and_clean_data():
-    
-    data = get_amazon_alexa_data()
-    # adds sentiment values based on 'verified reviews'
-    add_sentiments(data)
-
-    # downloads nltk onto users computer (only need to run once)
-    download_nltk_requirements()
-
-    # convert data into a pandas dataframe
-    data_df = pd.DataFrame(data)
-    data_df = clean(data_df)
-    X = vectorize(data_df)
-
-    return data_df, X
