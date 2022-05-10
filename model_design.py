@@ -18,19 +18,18 @@ def app():
 
     data_df, X = fetch_and_clean_data()
     max_words = len(get_words(data_df).keys())
-    num_words = 500
-        
 
     with st.form("Create Model", True):
-        # todo: move down
-        submit = st.form_submit_button("Create Model")
 
         name = st.text_input("Name of model file", value='model', help='filename of the model, overwrites the model if already exists')
-        num_words = st.number_input(label="Max words", min_value=1, value=num_words)
+        num_words = st.number_input(label="Max words", min_value=1, value=max_words)
         output_dim = st.number_input(label='Output dimensions', min_value=1, value=15)
-        hidden_units = st.number_input(label='Hidden units', min_value=1, value=176)        
-        dropout = st.number_input(label='Dropout rate', min_value=0.0, max_value=1.0, step=.05, value=.2)
-        category_num = st.number_input(label="Number of Categories", min_value=2, max_value=5)
+        hidden_units = st.number_input(label='Hidden units for the LSTM Layer', min_value=1, value=176)        
+        dropout = st.number_input(label='Dropout rate for the LSTM layer', min_value=0.0, max_value=1.0, step=.05, value=.2)
+        category_num = st.number_input(label="Number of output categories", min_value=2, max_value=5)
+        
+        # todo: move down
+        submit = st.form_submit_button("Create Model")
 
         if submit:
             model = Sequential()
@@ -39,13 +38,9 @@ def app():
             model.add(Dense(category_num, activation= 'sigmoid' if category_num == 2 else 'softmax'))
             model.compile(loss = 'binary_crossentropy' if category_num == 2 else 'categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-            singlePrediction = "This a an amazing product. I love it and it's great"
-            cleaned_text = clean_text(singlePrediction)
-            st.text(cleaned_text)
-            X = vectorize_text(cleaned_text)
-            st.write(f'prediction: {model(X)}')
-
             model.save(join('models', name + '.keras'))
+            st.success(f"Model saved to {join('models', name + '.keras')}")
+            print(f"Model saved to {join('models', name + '.keras')}")
     
 
 

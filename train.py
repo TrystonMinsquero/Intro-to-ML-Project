@@ -47,7 +47,7 @@ def app():
         
         #Splitting the data into training and testing
         y=pd.get_dummies(data_df['sentiment'])
-        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size_percent, random_state = 42)
+        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size_percent)
         stepsPerEpoch = int( int((X_train.shape[0] / batch_size)+1))
         model.fit(X_train, y_train, epochs = epochs, batch_size=batch_size, callbacks = [TrainCallback(epochs, stepsPerEpoch)])
 
@@ -62,14 +62,11 @@ def app():
         # X = vectorize_text(cleaned_text)
         # st.write(f'prediction: {model(X)}')
 
-        st.success("Saved training session to model")
-
-        
-        print('saved model to ' + join('models', modelname + '.keras'))
         save_model(model, join('models', modelname + '.keras'))
-        same_model = load_model(join('models', modelname + '.keras'))
-        print(model.summary())
-        print(same_model.summary())
+        st.success('Model saved to ' + join('models', modelname + '.keras'))
+        print('Model saved to ' + join('models', modelname + '.keras'))
+
+    
 
 
 

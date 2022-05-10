@@ -9,9 +9,6 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import LabelEncoder
 
-max_words = 500
-max_len = 200
-
 # add sentiments based off the numerical rating on a dictionary
 def add_sentiments(data, cutoff=3.0):
     for review in data:
@@ -50,20 +47,29 @@ def get_stopwords_from_file():
 
 # will clean the 'verified_reviews' column to be ready for analysis
 def clean_data(data_df):
+
     stop_words = get_stopwords_from_file()
+    debug_output = "original:\n" + data_df['verified_reviews'].head() + '\n'
 
     # To lowercase
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join(x.lower() for x in x.split()))
+    debug_output += "lowercase:\n" + data_df['verified_reviews'].head() + '\n'
 
     # Replacing the special characters and digits/numbers
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join(re.sub(r"[^a-zA-Z\s]", "", x) for x in x.split()))
-
+    debug_output += "removed special characters and digits:\n" + data_df['verified_reviews'].head() + '\n'
+    
     # Removing stop words
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join(x for x in x.split() if x not in stop_words))
+    debug_output += "removed stopwords:\n" + data_df['verified_reviews'].head() + '\n'
 
     # Lemmatization
     data_df['verified_reviews'] = data_df['verified_reviews'].apply(lambda x: ' '.join([Word(x).lemmatize() for x in x.split()]))
+    debug_output += "lemmatized:\n" + data_df['verified_reviews'].head() + '\n'
 
+    return data_df
+
+def fit_labels(data_df):
     # Encoded the target column
     lb=LabelEncoder()
     data_df['sentiment'] = lb.fit_transform(data_df['sentiment'])
@@ -86,15 +92,17 @@ def clean_text(text):
 
     return text
 
-def vectorize_text(text):
+def vectorize_text(text, max_words = 500, max_len = 200):
     # Convert reviews to numerical vectors
     tokenizer = Tokenizer(num_words=max_words, split=' ') 
+    tokenizer.fit_on_texts([text])
     X = tokenizer.texts_to_sequences([text])
     X = pad_sequences(X, maxlen=max_len)
+
     return X
 
 
-def vectorize_data(data_df):
+def vectorize_data(data_df, max_words = 500, max_len = 200):
     # Convert reviews to numerical vectors
     tokenizer = Tokenizer(num_words=max_words, split=' ') 
     tokenizer.fit_on_texts(data_df['verified_reviews'].values)
@@ -111,6 +119,7 @@ def get_common_wordcloud(data_df):
     word_cloud = wordcloud.WordCloud().generate(common_words)
     plt.imshow(word_cloud, interpolation="bilinear")
     plt.axis("off")
+
     return plt
 
 def get_words(data_df):
