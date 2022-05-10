@@ -24,7 +24,7 @@ def app():
     modelname = form.radio('Choose Model to Predict with', get_model_names())
 
     
-    singlePrediction = form.text_area("Sample Review")
+    singlePrediction = form.text_area("Sample Text")
     
     submit = form.form_submit_button("Predict")
 
@@ -35,12 +35,19 @@ def app():
         print(model.summary())
 
         if singlePrediction:      
+            binarySentiment = ['Negative', 'Positive']
+            tertiarySentiment = ['Negative', 'Neutral', 'Positive']
+
             st.write("Cleaned Text")
             cleaned_text = clean_text(singlePrediction)
             st.text(cleaned_text)
             X = vectorize_text(cleaned_text)
             # st.write(f'input: {X}')
-            st.write(f'prediction: {model(X)}')
+            prediction = list(model(X)[0])
+            if len(prediction) == 2:
+                st.write(f'prediction: {binarySentiment[prediction.index(max(prediction))]}')
+            elif len(prediction) == 3:
+                st.write(f'tertiarySentiment: {binarySentiment[prediction.index(max(prediction))]}')
             
         
         
