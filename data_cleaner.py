@@ -23,7 +23,7 @@ def apply_sentiments(df, cutoff):
     return 'Negative'
 
 def add_sentiments(data_df, cutoff=3.0):
-    data_df['sentiment'] = data_df.apply(apply_sentiments, args=[cutoff], axis=1)
+    data_df['sentiment'] = data_df.apply(lambda row: apply_sentiments(row, cutoff), axis=1)
     return data_df
 
 def add_review_length(data_df):

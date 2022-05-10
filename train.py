@@ -30,6 +30,7 @@ def app():
 
     data_df = fetch_and_clean_data(dataset_name).copy()
     data_df = add_sentiments(data_df)
+    data_df = fit_labels(data_df)
     X = vectorize_data(data_df)
 
     model = get_model(modelname)

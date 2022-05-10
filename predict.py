@@ -58,3 +58,16 @@ def get_model_names():
     for file in onlyfiles:
         model_names.append(file.removesuffix('.keras'))
     return model_names
+
+def get_predicted_sentiment(row):
+    binarySentiment = ['Negative', 'Positive']
+    tertiarySentiment = ['Negative', 'Neutral', 'Positive']
+    row = list(row)
+    return binarySentiment[row.index(max(row))]
+
+def add_predictions(data_df, model):
+    data_df = clean_data(data_df)
+    X = vectorize_data(data_df)
+    predictions = pd.DataFrame(model.predict(X))
+    data_df['predicted_sentiment'] = predictions.apply(lambda row: get_predicted_sentiment(row), axis=1)
+    return data_df
