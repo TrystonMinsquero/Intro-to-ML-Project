@@ -1,5 +1,4 @@
 import streamlit as st
-from data_loader import get_amazon_alexa_data
 from data_cleaner import *
 import pandas as pd
 from data_manipulation import fetch_and_clean_data
@@ -12,6 +11,7 @@ from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from sklearn.model_selection import train_test_split 
 from os import listdir
 from os.path import isfile, join
+from keras import callbacks
 
 def app():
     st.title("Training")
@@ -35,7 +35,7 @@ def app():
     test_size_percent = form.number_input("Validation Percentage", 0.0, 1.0, value=.3,
         help="will train on 1 - validation percentage, and evaluate model later")
 
-    batch_size = form.number_input("Batch Size", 1, len(data_df),
+    batch_size = form.number_input("Batch Size", 1, len(data_df), value=100,
         help=f"See {helpLink} for more info about the variables")
 
     epochs = form.number_input("Epochs", 1, 
@@ -48,13 +48,17 @@ def app():
         #Splitting the data into training and testing
         y=pd.get_dummies(data_df['sentiment'])
         X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size_percent, random_state = 42)
-        with rd.stdout:
-            model.fit(X_train, y_train, epochs = epochs, batch_size=batch_size, verbose = 'auto')
-            loss, accuracy = model.evaluate(X_test, y_test)
-            st.write(f"Loss: {round(loss,4)}   and   Accuracy: {round(accuracy, 4)}")
+        stepsPerEpoch = int( int((X_train.shape[0] / batch_size)+1))
+        model.fit(X_train, y_train, epochs = epochs, batch_size=batch_size, callbacks = [TrainCallback(epochs, stepsPerEpoch)])
+
+        complete = st.text("Validating Model...")
+        loss, accuracy = model.evaluate(X_test, y_test)
+        complete.text(f"Loss: {round(loss,4)}   and   Accuracy: {round(accuracy, 4)}")
+        
         save = st.button('Save Model')
         if save:
             model.save(join('models', modelname + '.keras'))
+            
 
 
 def get_model_names():
@@ -77,5 +81,32 @@ def create_model(X):
     print(model.summary())
     return model
 
+class TrainCallback(callbacks.Callback):
+    
+    def __init__(self, epochNum, stepsPerEpoch) -> None:
+        super().__init__()
+        self.epochNum = epochNum
+        self.stepsPerEpoch = stepsPerEpoch
+        self.epochLabel = st.text("Epoch 1/" + str(epochNum))
+        self.epochBar = st.progress(0.0)
+        self.batchLabel = st.text("Batch 1/" + str(stepsPerEpoch))
+        self.batchBar = st.progress(0.0)
 
+    def on_train_begin(self, logs=None):
+        print("Start training")
 
+    def on_train_end(self, logs=None):
+        print("Stop training")
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epochLabel.text(f"Epoch {epoch + 1}/{self.epochNum}")
+        self.batchBar.progress(0.0)
+
+    def on_batch_begin(self, batch, logs=None):
+        self.batchLabel.text(f"Batch {batch + 1}/{self.stepsPerEpoch}")
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.epochBar.progress((epoch + 1.0)/self.epochNum)
+
+    def on_train_batch_end(self, batch, logs=None):
+        self.batchBar.progress((batch + 1.0)/self.stepsPerEpoch)
