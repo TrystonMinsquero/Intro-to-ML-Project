@@ -29,21 +29,21 @@ def app():
 
     data_df = add_predictions(data_df, model)
     st.write(data_df)
-    
 
-    # add_review_length(data_df)
-    st.write(data_df)
-    st.write(data_df['sentiment'].shape[0])
-    plt.hist(data_df['sentiment'], bins=20, range=(0, 2))
-    # st.pyplot(plt.show())
-    y = pd.get_dummies(data_df['sentiment'])
+    # Count ratings
+    ratings = [0]*5
+
+    # Assuming from 1 to 5
+    for rating in data_df['rating']:
+        ratings[rating-1] += 1
+    
+    fig, ax = plt.subplots()
+    ax.bar(range(1,6), ratings)
+    ax.set_ylabel('Review count')
+    ax.set_xlabel('Rating')
+    st.pyplot(fig)
     
     st.pyplot(get_common_wordcloud(data_df))
-    
-    # plt.scatter(X[0], y)
-    # st.pyplot(plt.show())
-
-    
 
     return
 

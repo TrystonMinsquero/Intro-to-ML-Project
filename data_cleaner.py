@@ -22,7 +22,7 @@ def apply_sentiments(df, cutoff):
   elif df['rating'] < cutoff:
     return 'Negative'
 
-def add_sentiments(data_df, cutoff=3.0):
+def add_sentiments(data_df, cutoff=5.0):
     data_df['sentiment'] = data_df.apply(lambda row: apply_sentiments(row, cutoff), axis=1)
     return data_df
 
@@ -128,10 +128,12 @@ def get_common_wordcloud(data_df):
         common_words += ' '.join(str(i).split()) + ' '
 
     word_cloud = wordcloud.WordCloud().generate(common_words)
-    plt.imshow(word_cloud, interpolation="bilinear")
-    plt.axis("off")
+    
+    fig, ax = plt.subplots()
+    ax.imshow(word_cloud, interpolation="bilinear")
+    ax.axis("off")
 
-    return plt
+    return fig
 
 def get_words(data_df):
     common_words=''

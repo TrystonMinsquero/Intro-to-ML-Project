@@ -44,10 +44,11 @@ def app():
             X = vectorize_text(cleaned_text)
             # st.write(f'input: {X}')
             prediction = list(model(X)[0])
-            if len(prediction) == 2:
-                st.write(f'prediction: {binarySentiment[prediction.index(max(prediction))]}')
-            elif len(prediction) == 3:
-                st.write(f'tertiarySentiment: {binarySentiment[prediction.index(max(prediction))]}')
+            st.write(f'prediction: {[t.numpy() for t in prediction]}')
+            #if len(prediction) == 2:
+            #    st.write(f'prediction: {binarySentiment[prediction.index(max(prediction))]}')
+            #elif len(prediction) == 3:
+            #    st.write(f'tertiarySentiment: {binarySentiment[prediction.index(max(prediction))]}')
             
         
         
