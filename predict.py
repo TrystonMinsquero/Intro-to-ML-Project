@@ -61,10 +61,11 @@ def get_model_names():
     return model_names
 
 def get_predicted_sentiment(row):
-    binarySentiment = ['Negative', 'Positive']
-    tertiarySentiment = ['Negative', 'Neutral', 'Positive']
+    #binarySentiment = ['Negative', 'Positive']
+    #tertiarySentiment = ['Negative', 'Neutral', 'Positive']
     row = list(row)
-    return binarySentiment[row.index(max(row))]
+    #return binarySentiment[row.index(max(row))]
+    return row[-1] # need only the positive predicton
 
 def add_predictions(data_df, model):
     data_df = clean_data(data_df)

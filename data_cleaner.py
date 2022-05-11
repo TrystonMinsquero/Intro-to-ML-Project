@@ -22,7 +22,7 @@ def apply_sentiments(df, cutoff):
   elif df['rating'] < cutoff:
     return 'Negative'
 
-def add_sentiments(data_df, cutoff=5.0):
+def add_sentiments(data_df, cutoff=4.0):
     data_df['sentiment'] = data_df.apply(lambda row: apply_sentiments(row, cutoff), axis=1)
     return data_df
 

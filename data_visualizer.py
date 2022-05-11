@@ -36,10 +36,23 @@ def app():
     # Assuming from 1 to 5
     for rating in data_df['rating']:
         ratings[rating-1] += 1
+
+    # Categorize the sentiments by rating
+    def sentiment_group(g):
+        return rating_groups.get_group(g)['predicted_sentiment'].to_list()
+
+    rating_groups = data_df.groupby('rating')
+    rating_sentiments = [sentiment_group(g) for g in rating_groups.groups]
     
     fig, ax = plt.subplots()
     ax.bar(range(1,6), ratings)
     ax.set_ylabel('Review count')
+    ax.set_xlabel('Rating')
+    st.pyplot(fig)
+
+    fig, ax = plt.subplots()
+    ax.boxplot(rating_sentiments)
+    ax.set_ylabel('Sentiments')
     ax.set_xlabel('Rating')
     st.pyplot(fig)
     
