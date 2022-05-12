@@ -2,7 +2,9 @@
 
 ### Made by Tryston Minsquero Travis Guillett
 
-Access on: https://share.streamlit.io/trystonminsquero/cs4375project/main/main.py
+Access the web app [here](https://share.streamlit.io/trystonminsquero/cs4375project/main/main.py).
+
+Read our report [here](https://github.com/TrystonMinsquero/cs4375project/blob/main/Report.pdf).
 
 ## Overview
 
