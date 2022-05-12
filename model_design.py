@@ -9,7 +9,7 @@ from os import listdir
 
 def app():
     st.title("Model Design")
-    max_words = 5000
+    max_words = 500
 
     with st.form("Create Model", True):
 
@@ -28,7 +28,8 @@ def app():
             model.add(Embedding(num_words, output_dim))
             model.add(LSTM(hidden_units, dropout=dropout))
             model.add(Dense(category_num, activation= 'sigmoid' if category_num == 2 else 'softmax'))
-            model.compile(loss = 'binary_crossentropy' if category_num == 2 else 'categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            model.compile(loss = 'binary_crossentropy' if category_num == 2 else 'categorical_crossentropy',
+                optimizer='adam', metrics=['accuracy'])
 
             model.save(join('models', name + '.keras'))
             st.success(f"Model saved to {join('models', name + '.keras')}")

@@ -9,21 +9,37 @@ from predict import add_predictions
 
 
 def app():
+    st.title("Data Visualization")
+
+    st.header("Input Data")
 
     dataset_name = st.radio("Select Dataset", get_dataset_names())
     
-    modelname = st.radio('Choose Model to Train', get_model_names())
-
-    model = get_model(modelname)
-
     # get raw data
     data_df = get_dataset(dataset_name)
+
+    st.subheader("Raw data for " + dataset_name)
+    st.write(data_df)
+
     # clean data 
     data_df = clean_data(data_df)
     # add sentiments based off rating
     data_df = add_sentiments(data_df)
     # fit labels to cleaned data
     data_df = fit_labels(data_df)
+
+    st.subheader("Cleaned data for " + dataset_name)
+    st.write(data_df)
+    
+    st.subheader("Word Cloud for the cleaned data for " + dataset_name)
+    st.pyplot(get_common_wordcloud(data_df))
+
+    st.header("Output Data")
+
+    modelname = st.radio('Choose Model to Predict with', get_model_names())
+
+    model = get_model(modelname)
+
     # convert text to numerical data
     X = vectorize_data(data_df)
 
@@ -48,15 +64,17 @@ def app():
     ax.bar(range(1,6), ratings)
     ax.set_ylabel('Review count')
     ax.set_xlabel('Rating')
+
+    st.subheader("Frequency of ratings")
     st.pyplot(fig)
 
     fig, ax = plt.subplots()
     ax.boxplot(rating_sentiments)
     ax.set_ylabel('Sentiments')
     ax.set_xlabel('Rating')
-    st.pyplot(fig)
     
-    st.pyplot(get_common_wordcloud(data_df))
+    st.subheader("Rating by sentiment") # Please title this better
+    st.pyplot(fig)
 
     return
 
