@@ -1,6 +1,6 @@
 # Project for CS 4375
 
-### Made by Tryston Minsquero Travis Guillett
+### Made by Tryston Minsquero and Travis Guillett
 
 Access the web app [here](https://share.streamlit.io/trystonminsquero/cs4375project/main/main.py).
 
