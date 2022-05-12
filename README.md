@@ -4,8 +4,6 @@
 
 Access on: https://share.streamlit.io/trystonminsquero/cs4375project/main/main.py
 
-Github with all the data: https://github.com/TrystonMinsquero/cs4375project
-
 ## Overview
 
 A web app to create text-sentiment analysis LTSM models for datasets with reviews
