@@ -36,7 +36,7 @@ def app():
 
     st.header("Output Data")
 
-    modelname = st.radio('Choose Model to Predict with', get_model_names())
+    modelname = st.radio('Choose Model to Predict With', get_model_names())
 
     model = get_model(modelname)
 
@@ -65,7 +65,7 @@ def app():
     ax.set_ylabel('Review count')
     ax.set_xlabel('Rating')
 
-    st.subheader("Frequency of ratings")
+    st.subheader("Frequency of Actual Review Ratings")
     st.pyplot(fig)
 
     fig, ax = plt.subplots()
@@ -73,7 +73,7 @@ def app():
     ax.set_ylabel('Sentiments')
     ax.set_xlabel('Rating')
     
-    st.subheader("Rating by sentiment") # Please title this better
+    st.subheader("Predicted Sentiment vs. Actual Review Rating") # Please title this better
     st.pyplot(fig)
 
     return
